@@ -21,7 +21,7 @@ class MachineController extends Controller
      */
     public function create()
     {
-        //
+        return view('machines.create');
     }
 
     /**
@@ -29,7 +29,17 @@ class MachineController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'serial_number' => 'required|string|max:255|unique:machines',
+            'name' => 'required|string|max:255',
+            'factory_id' => 'required|exists:factories,id',
+            'type' => 'nullable|string|max:255',
+            'total_operating_hours' => 'nullable|integer|min:0',
+        ]);
+
+        Machine::create($validated);
+
+        return redirect()->route('machines.index')->with('success', 'تم إضافة الآلة بنجاح.');
     }
 
     /**
@@ -46,6 +56,41 @@ class MachineController extends Controller
     public function edit(string $id)
     {
         //
+    }
+
+    /**
+     * Update operating hours and check for maintenance
+     */
+    public function updateHours(Request $request, \App\Models\Machine $machine)
+    {
+        $request->validate([
+            'hours_to_add' => 'required|integer|min:1'
+        ]);
+
+        $oldHours = $machine->total_operating_hours;
+        $machine->total_operating_hours += $request->hours_to_add;
+        $machine->save();
+
+        $message = 'تم تحديث ساعات التشغيل بنجاح.';
+
+        // Maintenance Threshold logic (e.g., every 5000 hours)
+        $threshold = 5000;
+        $oldThresholdLevel = floor($oldHours / $threshold);
+        $newThresholdLevel = floor($machine->total_operating_hours / $threshold);
+
+        if ($newThresholdLevel > $oldThresholdLevel) {
+            // Threshold crossed, create preventive maintenance task
+            \App\Models\MaintenanceTask::create([
+                'machine_id' => $machine->id,
+                'type' => 'preventive',
+                'status' => 'pending',
+                'scheduled_date' => now()->addDays(2),
+                'notes' => 'أمر صيانة دورية تم إنشاؤه آلياً بسبب تجاوز الآلة ' . ($newThresholdLevel * $threshold) . ' ساعة تشغيل.',
+            ]);
+            $message .= ' تنبيه: تم إصدار أمر صيانة وقائية آلياً لتجاوز الحد الأقصى لساعات التشغيل!';
+        }
+
+        return redirect()->back()->with('success', $message);
     }
 
     /**

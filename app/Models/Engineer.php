@@ -6,5 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Engineer extends Model
 {
-    //
+    protected $fillable = ['user_id', 'employee_id', 'specialization'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(MaintenanceTask::class);
+    }
 }

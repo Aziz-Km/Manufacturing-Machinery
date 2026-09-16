@@ -9,9 +9,14 @@
                 <h3 class="fw-bold mb-0 text-gold">
                     سجل الآلات والمعدات
                 </h3>
-                <button class="btn btn-primary fw-bold px-4">
-                    إضافة آلة جديدة
-                </button>
+                <div class="text-start">
+                    <a href="{{ route('reports.machines') }}" target="_blank" class="btn btn-outline-dark fw-bold px-3 me-2" title="طباعة تقرير الآلات">
+                        <i class="fas fa-print"></i> طباعة
+                    </a>
+                    <a href="{{ route('machines.create') }}" class="btn btn-primary fw-bold px-4">
+                        إضافة آلة جديدة
+                    </a>
+                </div>
             </div>
 
             <div class="card shadow-sm border-0">
@@ -31,7 +36,7 @@
                             <tbody>
                                 @forelse($machines as $machine)
                                 <tr>
-                                    <td class="py-3 px-4 fw-bold" style="text-align: right;">{{ $machine->serial_number }}</td>
+                                    <td class="py-3 px-4 fw-bold" style="text-align: right;" dir="ltr">{{ $machine->serial_number }}</td>
                                     <td class="py-3 px-4" style="text-align: right;">{{ $machine->name }}</td>
                                     <td class="py-3 px-4">
                                         <span class="badge bg-secondary">{{ $machine->factory->name ?? 'غير محدد' }}</span>
@@ -51,8 +56,12 @@
                                         @endif
                                     </td>
                                     <td class="py-3 px-4 text-center">
-                                        <button class="btn btn-sm btn-outline-primary">تفاصيل</button>
-                                        <button class="btn btn-sm btn-outline-warning">صيانة</button>
+                                        <form action="{{ route('machines.updateHours', $machine->id) }}" method="POST" class="d-flex justify-content-center align-items-center">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="number" name="hours_to_add" class="form-control form-control-sm me-2" placeholder="+ساعات" min="1" style="width: 80px;" required>
+                                            <button type="submit" class="btn btn-sm btn-outline-success fw-bold" title="إضافة ساعات تشغيل"><i class="fas fa-plus"></i></button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @empty

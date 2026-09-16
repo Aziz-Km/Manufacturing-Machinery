@@ -48,34 +48,82 @@
     </style>
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md shadow-sm">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                    <!-- Logo Placeholder -->
-                    <div style="width: 40px; height: 40px; background-color: #d4af37; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: 10px; color: white; font-weight: bold;">J</div>
+                    <img src="{{ asset('logo.png') }}" alt="الشعار" style="height: 55px; width: auto; margin-left: 15px; object-fit: contain;">
                     منظومة الصيانة - الجوف
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <div class="d-flex align-items-center">
+                    @auth
+                        <a class="btn btn-sm btn-outline-danger fw-bold me-3" href="{{ route('logout') }}"
+                           onclick="event.preventDefault(); document.getElementById('logout-form-main').submit();">
+                            <i class="fas fa-sign-out-alt"></i> خروج
+                        </a>
+                        <form id="logout-form-main" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    @endauth
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar (which is Right in RTL) -->
                     <ul class="navbar-nav me-auto">
                         @auth
+                            @can('manage_factories')
                             <li class="nav-item">
-                                <a class="nav-link" href="#">المصانع</a>
+                                <a class="nav-link fw-bold mx-2 {{ request()->routeIs('factories.*') ? 'active text-gold' : 'text-dark' }}" href="{{ route('factories.index') }}">
+                                    <i class="fas fa-industry"></i> المصانع
+                                </a>
                             </li>
+                            @endcan
+                            
+                            @can('manage_machines')
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('machines.index') }}">الآلات</a>
+                                <a class="nav-link fw-bold mx-2 {{ request()->routeIs('machines.*') ? 'active text-gold' : 'text-dark' }}" href="{{ route('machines.index') }}">
+                                    <i class="fas fa-cogs"></i> الآلات
+                                </a>
                             </li>
+                            @endcan
+                            
+                            @can('manage_engineers')
                             <li class="nav-item">
-                                <a class="nav-link" href="#">مهام الصيانة</a>
+                                <a class="nav-link fw-bold mx-2 {{ request()->routeIs('engineers.*') ? 'active text-gold' : 'text-dark' }}" href="{{ route('engineers.index') }}">
+                                    <i class="fas fa-users-cog"></i> المهندسين
+                                </a>
                             </li>
+                            @endcan
+                            
+                            @can('manage_catalogs')
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold mx-2 {{ request()->routeIs('catalogs.*') ? 'active text-gold' : 'text-dark' }}" href="{{ route('catalogs.index') }}">
+                                    <i class="fas fa-list-check"></i> كتالوج المهام
+                                </a>
+                            </li>
+                            @endcan
+                            
+                            @can('manage_tasks')
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold mx-2 {{ request()->routeIs('tasks.*') ? 'active text-gold' : 'text-dark' }}" href="{{ route('tasks.index') }}">
+                                    <i class="fas fa-tools"></i> أوامر الصيانة
+                                </a>
+                            </li>
+                            @endcan
+                            
+                            @can('manage_users')
+                            <li class="nav-item">
+                                <a class="nav-link text-danger fw-bold mx-2 {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                                    <i class="fas fa-shield-alt"></i> الصلاحيات
+                                </a>
+                            </li>
+                            @endcan
                         @endauth
                     </ul>
 
@@ -89,22 +137,10 @@
                                 </li>
                             @endif
                         @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-start" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        تسجيل الخروج
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
+                            <li class="nav-item d-flex align-items-center">
+                                <span class="nav-link text-muted fw-bold me-3">
+                                    <i class="fas fa-user-circle"></i> {{ Auth::user()->name }}
+                                </span>
                             </li>
                         @endguest
                     </ul>

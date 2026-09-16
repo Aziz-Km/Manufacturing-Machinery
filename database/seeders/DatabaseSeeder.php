@@ -22,7 +22,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            RolesAndPermissionsSeeder::class,
+            FactorySeeder::class,
             MachineSeeder::class,
+            TaskCatalogSeeder::class,
         ]);
     }
 }
