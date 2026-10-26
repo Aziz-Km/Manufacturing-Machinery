@@ -18,6 +18,11 @@ class MaintenanceTask extends Model
         'notes',
     ];
 
+    protected $casts = [
+        'scheduled_date' => 'date',
+        'completion_date' => 'date',
+    ];
+
     public function machine()
     {
         return $this->belongsTo(Machine::class);
@@ -32,4 +37,34 @@ class MaintenanceTask extends Model
     {
         return $this->belongsTo(TaskCatalog::class, 'task_catalog_id');
     }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'pending' => 'قيد الانتظار',
+            'in_progress' => 'جاري العمل',
+            'completed' => 'مكتمل',
+            default => $this->status ?? 'غير محدد',
+        };
+    }
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return match ($this->category) {
+            'mechanical' => 'ميكانيكا',
+            'electrical' => 'كهرباء',
+            'general' => 'عام',
+            default => $this->category ?? 'غير محدد',
+        };
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return match ($this->type) {
+            'preventive' => 'صيانة وقائية',
+            'corrective' => 'صيانة تصحيحية',
+            default => $this->type ?? 'غير محدد',
+        };
+    }
 }
+

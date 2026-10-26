@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Machine extends Model
 {
     protected $fillable = [
-        'factory_id', 'name', 'type', 'serial_number', 'status', 'total_operating_hours'
+        'factory_id', 'production_line', 'name', 'type', 'serial_number', 'status', 'total_operating_hours'
     ];
 
     public function factory()

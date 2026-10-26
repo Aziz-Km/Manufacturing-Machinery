@@ -23,14 +23,25 @@
                             <input type="text" class="form-control" id="name" name="name" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="factory_id" class="form-label fw-bold">المنطقة / المصنع</label>
-                            <select class="form-select" id="factory_id" name="factory_id" required>
-                                <option value="" disabled selected>اختر المصنع أو المنطقة...</option>
-                                @foreach(\App\Models\Factory::all() as $factory)
-                                    <option value="{{ $factory->id }}">{{ $factory->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="factory_id" class="form-label fw-bold">المنطقة / المصنع</label>
+                                <select class="form-select" id="factory_id" name="factory_id" required>
+                                    <option value="" disabled selected>اختر المصنع...</option>
+                                    @foreach(\App\Models\Factory::all() as $factory)
+                                        <option value="{{ $factory->id }}">{{ $factory->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="production_line" class="form-label fw-bold">خط الإنتاج / التصنيف</label>
+                                <select class="form-select" id="production_line" name="production_line">
+                                    <option value="" selected>بدون تصنيف (عام)</option>
+                                    <option value="خط البينتونايت">خط البينتونايت (Bentonite)</option>
+                                    <option value="خط البرايت">خط البرايت (Barite)</option>
+                                </select>
+                                <small class="text-muted">مخصص لمصنع GPP بشكل أساسي</small>
+                            </div>
                         </div>
 
                         <div class="row">

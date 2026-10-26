@@ -10,9 +10,19 @@ class MachineController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $machines = Machine::with('factory')->paginate(15);
+        $query = Machine::with('factory');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('serial_number', 'like', "%{$search}%")
+                  ->orWhere('name', 'like', "%{$search}%");
+            });
+        }
+
+        $machines = $query->orderBy('serial_number')->paginate(15)->appends(['search' => $request->search]);
         return view('machines.index', compact('machines'));
     }
 
@@ -33,6 +43,7 @@ class MachineController extends Controller
             'serial_number' => 'required|string|max:255|unique:machines',
             'name' => 'required|string|max:255',
             'factory_id' => 'required|exists:factories,id',
+            'production_line' => 'nullable|string|max:255',
             'type' => 'nullable|string|max:255',
             'total_operating_hours' => 'nullable|integer|min:0',
         ]);

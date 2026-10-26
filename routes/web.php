@@ -35,7 +35,7 @@ Route::middleware(['auth'])->group(function () {
     
     // Reports
     Route::get('/reports/machines', [\App\Http\Controllers\ReportController::class, 'machinesReport'])->name('reports.machines')->middleware('can:manage_machines');
-    Route::get('/reports/engineers', [\App\Http\Controllers\ReportController::class, 'engineersTasksReport'])->name('reports.engineers')->middleware('can:manage_engineers');
+    Route::get('/reports/engineers', [\App\Http\Controllers\ReportController::class, 'engineersTasksReport'])->name('reports.engineers');
     
     // Only Admin can access users
     Route::middleware(['role:Admin'])->group(function () {

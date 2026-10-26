@@ -9,9 +9,14 @@
                 <h3 class="fw-bold mb-0 text-gold">
                     <i class="fas fa-users-cog me-2"></i> سجل المهندسين
                 </h3>
-                <a href="{{ route('engineers.create') }}" class="btn btn-primary fw-bold px-4">
-                    إضافة مهندس جديد
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('reports.engineers') }}" target="_blank" class="btn btn-outline-dark fw-bold px-3" title="طباعة تقرير مهام المهندسين">
+                        <i class="fas fa-print me-1"></i> طباعة تقرير المهام
+                    </a>
+                    <a href="{{ route('engineers.create') }}" class="btn btn-primary fw-bold px-4">
+                        <i class="fas fa-user-plus me-1"></i> إضافة مهندس جديد
+                    </a>
+                </div>
             </div>
 
             <div class="card shadow-sm border-0">
@@ -31,18 +36,31 @@
                             <tbody>
                                 @forelse($engineers as $engineer)
                                 <tr>
-                                    <td class="py-3 px-4 fw-bold">{{ $engineer->user->name ?? 'غير محدد' }}</td>
+                                    <td class="py-3 px-4 fw-bold">
+                                        <a href="{{ route('engineers.show', $engineer->id) }}" class="text-decoration-none text-dark">
+                                            {{ $engineer->user->name ?? 'غير محدد' }}
+                                        </a>
+                                    </td>
                                     <td class="py-3 px-4 fw-bold text-primary">{{ $engineer->employee_id ?? '-' }}</td>
                                     <td class="py-3 px-4" dir="ltr">{{ $engineer->user->email ?? 'غير محدد' }}</td>
                                     <td class="py-3 px-4">
                                         <span class="badge bg-info text-dark">{{ $engineer->specialization ?? 'عام' }}</span>
                                     </td>
                                     <td class="py-3 px-4">
-                                        <span class="fw-bold">{{ $engineer->tasks->count() }}</span> مهام
+                                        <span class="badge bg-secondary fs-6">{{ $engineer->tasks->count() }} مهام</span>
                                     </td>
                                     <td class="py-3 px-4 text-center">
-                                        <button class="btn btn-sm btn-outline-primary">عرض المهام</button>
-                                        <a href="{{ route('engineers.edit', $engineer->id) }}" class="btn btn-sm btn-outline-warning">تعديل</a>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ route('reports.engineers', ['engineer_id' => $engineer->id]) }}" target="_blank" class="btn btn-outline-dark" title="طباعة مهام هذا المهندس">
+                                                <i class="fas fa-print me-1"></i> طباعة المهام
+                                            </a>
+                                            <a href="{{ route('engineers.show', $engineer->id) }}" class="btn btn-outline-primary" title="عرض تفاصيل ومهام المهندس">
+                                                <i class="fas fa-eye me-1"></i> عرض المهام
+                                            </a>
+                                            <a href="{{ route('engineers.edit', $engineer->id) }}" class="btn btn-outline-warning" title="تعديل البيانات">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                                 @empty

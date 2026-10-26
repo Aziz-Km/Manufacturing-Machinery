@@ -61,7 +61,8 @@ class EngineerController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $engineer = \App\Models\Engineer::with(['user', 'tasks.machine.factory', 'tasks.catalog'])->findOrFail($id);
+        return view('engineers.show', compact('engineer'));
     }
 
     /**

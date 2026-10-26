@@ -36,9 +36,23 @@ class FactoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Factory $factory)
+    public function show(Request $request, Factory $factory)
     {
-        $machines = $factory->machines()->paginate(15);
+        $query = $factory->machines()->orderBy('serial_number');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('serial_number', 'like', "%{$search}%")
+                  ->orWhere('name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('line')) {
+            $query->where('production_line', $request->input('line'));
+        }
+
+        $machines = $query->paginate(15)->appends(['search' => $request->search, 'line' => $request->line]);
         return view('factories.show', compact('factory', 'machines'));
     }
 
